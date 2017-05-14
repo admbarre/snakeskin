@@ -19,9 +19,8 @@ filenames = [img.filename for img in images]
 resized_images = [img.resize(ratio) for img in images]
 imgs_with_names= zip(resized_images,filenames)
 
-for img in imgs_with_names:
-    img[0].save(img[1])  
-
+for img, name in imgs_with_names:
+    img.save(name)
 os.rename(Path.cwd(), Path.cwd() / '..' / today)    # Renames our folder with the current date
 
 def scale(directory, ratio):
