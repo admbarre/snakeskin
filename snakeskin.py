@@ -32,11 +32,11 @@ print('Editing:')
 for name in filenames:
     print('+ {}'.format(name))
 if yesno('Resize files?'):
-    resized_images = [img.resize(ratio) for img in images]
+    resized_images = [img.resize(ratio, Image.ANTIALIAS) for img in images]
     imgs_with_names= zip(resized_images,filenames)
 
     for img, name in imgs_with_names:
-        img.save(name)
+        img.save(name,subsampling=0,quality=100)
 
     if yesno("Rename folder with today's date?"):
         os.rename(Path.cwd(), Path.cwd() / '..' / today)    # Renames our folder with the current date
