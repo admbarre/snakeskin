@@ -2,6 +2,13 @@ from PIL import Image
 import sys, os, datetime, zipfile
 from pathlib import Path
 
+'''
+if len(sys.argv) < 2:
+    sys.exit("Program usage: snakeskin.py [directory]")
+target = Path(sys.argv[1])    # The directory with our images we want scaled
+os.chdir(target)    # Move into our image directory
+'''
+
 def yesno(prompt):
     while True:
         response = input('{} (y/n): '.format(prompt)).lower()
@@ -11,12 +18,13 @@ def yesno(prompt):
             return False
         else:
             print('Invalid input. Try again')
-'''
-if len(sys.argv) < 2:
-    sys.exit("Program usage: snakeskin.py [directory]")
-target = Path(sys.argv[1])    # The directory with our images we want scaled
-os.chdir(target)    # Move into our image directory
-'''
+
+def load_images(imgs=None):
+    if imgs is None:    # Load the images in the current directory
+        images = [Image.open(img) for img in os.listdir() if img.endswith(formats)]
+    else:
+        images = imgs
+    return images
 
 today = datetime.date.today().strftime('%m-%d-%y')  # Today's date in our preferred format
 print('Date: {}'.format(today))
@@ -24,7 +32,8 @@ print('Date: {}'.format(today))
 ratio = (1920,1080) # Our desired image size
 formats = ('.jpg', '.png')  # Our accepted image formats
 
-images = [Image.open(img) for img in os.listdir() if img.endswith(formats)]   # Opens all our images as long as the format is supported
+#images = [Image.open(img) for img in os.listdir() if img.endswith(formats)]   # Opens all our images as long as the format is supported
+images = load_images()
 
 # NOTE: Image object loses its original format and filename properties
 filenames = [img.filename for img in images]
