@@ -9,6 +9,14 @@ target = Path(sys.argv[1])    # The directory with our images we want scaled
 os.chdir(target)    # Move into our image directory
 '''
 
+# ==============
+# Globals
+# TODO: FIX THIS
+# ==============
+today = datetime.date.today().strftime('%m-%d-%y') 
+ratio = (1920,1080) # Our desired image size
+formats = ('.jpg', '.png')  # Our accepted image formats
+
 def yesno(prompt):
     while True:
         response = input('{} (y/n): '.format(prompt)).lower()
@@ -26,27 +34,25 @@ def load_images(imgs=None):
         images = imgs
     return images
 
-today = datetime.date.today().strftime('%m-%d-%y')  # Today's date in our preferred format
-print('Date: {}'.format(today))
+def main():
+    print('Date: {}'.format(today))
 
-ratio = (1920,1080) # Our desired image size
-formats = ('.jpg', '.png')  # Our accepted image formats
+    images = load_images()
 
-#images = [Image.open(img) for img in os.listdir() if img.endswith(formats)]   # Opens all our images as long as the format is supported
-images = load_images()
+    # NOTE: Image object loses its original format and filename properties
+    filenames = [img.filename for img in images]
+    print('Editing:')
+    for name in filenames:
+        print('+ {}'.format(name))
+    if yesno('Resize files?'):
+        resized_images = [img.resize(ratio, Image.ANTIALIAS) for img in images]
+        imgs_with_names= zip(resized_images,filenames)
 
-# NOTE: Image object loses its original format and filename properties
-filenames = [img.filename for img in images]
-print('Editing:')
-for name in filenames:
-    print('+ {}'.format(name))
-if yesno('Resize files?'):
-    resized_images = [img.resize(ratio, Image.ANTIALIAS) for img in images]
-    imgs_with_names= zip(resized_images,filenames)
+        for img, name in imgs_with_names:
+            img.save(name,subsampling=0,quality=100)
 
-    for img, name in imgs_with_names:
-        img.save(name,subsampling=0,quality=100)
+        if yesno("Rename folder with today's date?"):
+            os.rename(Path.cwd(), Path.cwd() / '..' / today)    # Renames our folder with the current date
+    print('~Snakeskin has completed~')
 
-    if yesno("Rename folder with today's date?"):
-        os.rename(Path.cwd(), Path.cwd() / '..' / today)    # Renames our folder with the current date
-print('~Snakeskin has completed~')
+main()
