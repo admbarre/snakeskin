@@ -14,7 +14,7 @@ os.chdir(target)    # Move into our image directory
 # TODO: FIX THIS
 # ==============
 today = datetime.date.today().strftime('%m-%d-%y') 
-ratio = (1920,1080) # Our desired image size
+g_ratio = (1920,1080) # Our desired image size
 formats = ('.jpg', '.png')  # Our accepted image formats
 
 def yesno(prompt):
@@ -34,6 +34,10 @@ def load_images(imgs=None):
         images = imgs
     return images
 
+#TODO: accept ratio
+def resize(images,ratio):
+    return [img.resize(ratio, Image.ANTIALIAS) for img in images]
+    
 def main():
     print('Date: {}'.format(today))
 
@@ -44,13 +48,20 @@ def main():
     print('Editing:')
     for name in filenames:
         print('+ {}'.format(name))
+
     if yesno('Resize files?'):
-        resized_images = [img.resize(ratio, Image.ANTIALIAS) for img in images]
+        resized_images = resize(images,g_ratio)
         imgs_with_names= zip(resized_images,filenames)
 
+        '''
+        for img in resized_images:
+            print(f'{img.filename}')
+        '''
+
+        '''
         for img, name in imgs_with_names:
             img.save(name,subsampling=0,quality=100)
-
+        '''
         if yesno("Rename folder with today's date?"):
             os.rename(Path.cwd(), Path.cwd() / '..' / today)    # Renames our folder with the current date
     print('~Snakeskin has completed~')
