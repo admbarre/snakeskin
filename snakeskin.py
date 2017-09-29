@@ -2,6 +2,7 @@ from PIL import Image
 import sys, os, datetime, zipfile
 from pathlib import Path
 
+#TODO: Use an argument parsin lib to add options
 '''
 if len(sys.argv) < 2:
     sys.exit("Program usage: snakeskin.py [directory]")
@@ -13,9 +14,9 @@ os.chdir(target)    # Move into our image directory
 # Globals
 # TODO: FIX THIS
 # ==============
-today = datetime.date.today().strftime('%m-%d-%y') 
+g_today = datetime.date.today().strftime('%m-%d-%y') 
 g_ratio = (1920,1080) # Our desired image size
-formats = ('.jpg', '.png')  # Our accepted image formats
+g_formats = ('.jpg', '.png')  # Our accepted image formats
 
 def yesno(prompt):
     while True:
@@ -28,9 +29,9 @@ def yesno(prompt):
             print('Invalid input. Try again')
 
 def load_images(imgs=None):
-    #TODO: formats is a global NEEDS FIXING
+    #TODO: g_formats is a global NEEDS FIXING
     if imgs is None:    # Load the images in the current directory
-        images = [Image.open(img) for img in os.listdir() if img.endswith(formats)]
+        images = [Image.open(img) for img in os.listdir() if img.endswith(g_formats)]
     else:
         images = imgs
     
@@ -50,7 +51,8 @@ def quit():
     print('~Snakeskin has completed~')
 
 def main():
-    print('Date: {today}')
+    #TODO: g_today is a global NEEDS FIXING
+    print('Date: {g_today}')
 
     images, filenames = load_images()
 
@@ -63,8 +65,9 @@ def main():
         if yesno('Save files?'):
             if save(resized_images, filenames):
                 print('Files saved successfully.')
+            #TODO: g_today is a global NEEDS FIXING
             if yesno("Rename folder with today's date?"):
-                os.rename(Path.cwd(), Path.cwd() / '..' / today)    # Renames our folder with the current date
+                os.rename(Path.cwd(), Path.cwd() / '..' / g_today)
     quit()
 main()
 
