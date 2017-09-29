@@ -19,44 +19,42 @@ formats = ('.jpg', '.png')  # Our accepted image formats
 
 def yesno(prompt):
     while True:
-        response = input('{} (y/n): '.format(prompt)).lower()
+        response = input(f'{prompt} (y/n): ').lower()
         if response == 'y':
-            return True
+            return 1
         elif response == 'n':
-            return False
+            return 0
         else:
             print('Invalid input. Try again')
 
 def load_images(imgs=None):
+    #TODO: formats is a global NEEDS FIXING
     if imgs is None:    # Load the images in the current directory
         images = [Image.open(img) for img in os.listdir() if img.endswith(formats)]
     else:
         images = imgs
-    return images
+    
+    # NOTE: Image object loses its original format and filename properties
+    filenames = [img.filename for img in images]
+    return images, filenames
 
-#TODO: accept ratio
 def resize(images,ratio):
     return [img.resize(ratio, Image.ANTIALIAS) for img in images]
-    
+
+def save(images,filenames):
+    pass
+
 def main():
     print('Date: {}'.format(today))
 
-    images = load_images()
+    images,filenames = load_images()
 
-    # NOTE: Image object loses its original format and filename properties
-    filenames = [img.filename for img in images]
     print('Editing:')
     for name in filenames:
         print('+ {}'.format(name))
 
     if yesno('Resize files?'):
         resized_images = resize(images,g_ratio)
-        imgs_with_names= zip(resized_images,filenames)
-
-        '''
-        for img in resized_images:
-            print(f'{img.filename}')
-        '''
 
         '''
         for img, name in imgs_with_names:
