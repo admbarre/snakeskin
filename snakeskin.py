@@ -52,7 +52,7 @@ def quit():
 
 def main():
     #TODO: g_today is a global NEEDS FIXING
-    print('Date: {g_today}')
+    print(f'Date: {g_today}')
 
     images, filenames = load_images()
 
@@ -69,5 +69,6 @@ def main():
             if yesno("Rename folder with today's date?"):
                 os.rename(Path.cwd(), Path.cwd() / '..' / g_today)
     quit()
-main()
+if __name__ == '__main__':
+    main()
 
