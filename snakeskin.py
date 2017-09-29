@@ -42,26 +42,29 @@ def resize(images,ratio):
     return [img.resize(ratio, Image.ANTIALIAS) for img in images]
 
 def save(images,filenames):
-    pass
+    for img, name in zip(images, filenames):
+        img.save(name,subsampling=0,quality=100)
+    return True
+
+def quit():
+    print('~Snakeskin has completed~')
 
 def main():
-    print('Date: {today}'
+    print('Date: {today}')
 
-    images,filenames = load_images()
+    images, filenames = load_images()
 
     print('Editing:')
     for name in filenames:
-        print('+ {name}')
+        print(f'+ {name}')
 
     if yesno('Resize files?'):
         resized_images = resize(images,g_ratio)
-
-        '''
-        for img, name in imgs_with_names:
-            img.save(name,subsampling=0,quality=100)
-        '''
-        if yesno("Rename folder with today's date?"):
-            os.rename(Path.cwd(), Path.cwd() / '..' / today)    # Renames our folder with the current date
-    print('~Snakeskin has completed~')
-
+        if yesno('Save files?'):
+            if save(resized_images, filenames):
+                print('Files saved successfully.')
+            if yesno("Rename folder with today's date?"):
+                os.rename(Path.cwd(), Path.cwd() / '..' / today)    # Renames our folder with the current date
+    quit()
 main()
+
