@@ -33,7 +33,7 @@ def load_images(imgs=None):
     if imgs is None:    # Load the images in the current directory
         images = [Image.open(img) for img in os.listdir() if img.endswith(g_formats)]
     else:
-        images = imgs
+        images = [Image.open(img) for img in imgs]
     
     # NOTE: Image object loses its original format and filename properties
     filenames = [img.filename for img in images]
