@@ -45,13 +45,13 @@ def save(images,filenames):
     pass
 
 def main():
-    print('Date: {}'.format(today))
+    print('Date: {today}'
 
     images,filenames = load_images()
 
     print('Editing:')
     for name in filenames:
-        print('+ {}'.format(name))
+        print('+ {name}')
 
     if yesno('Resize files?'):
         resized_images = resize(images,g_ratio)
