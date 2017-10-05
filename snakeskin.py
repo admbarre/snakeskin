@@ -18,6 +18,8 @@ g_today = datetime.date.today().strftime('%m-%d-%y')
 g_ratio = (1920,1080) # Our desired image size
 g_formats = ('.jpg', '.png')  # Our accepted image formats
 
+g_imgs = {}
+
 def yesno(prompt):
     while True:
         response = input(f'{prompt} (y/n): ').lower()
@@ -27,6 +29,14 @@ def yesno(prompt):
             return 0
         else:
             print('Invalid input. Try again')
+
+
+def add_image(filename):
+    if filename not in g_imgs:
+        g_imgs[filename] = Image.open(filename)
+def remove_image(filename):
+    if filename in g_imgs:
+        del(g_imgs[filename])
 
 def load_images(imgs=None):
     #TODO: g_formats is a global NEEDS FIXING
@@ -39,7 +49,7 @@ def load_images(imgs=None):
     filenames = [img.filename for img in images]
     return images, filenames
 
-def resize(images,ratio):
+def resize(images,ratio=g_ratio):
     return [img.resize(ratio, Image.ANTIALIAS) for img in images]
 
 def save(images,filenames):
@@ -69,6 +79,6 @@ def main():
             if yesno("Rename folder with today's date?"):
                 os.rename(Path.cwd(), Path.cwd() / '..' / g_today)
     quit()
+
 if __name__ == '__main__':
     main()
-
