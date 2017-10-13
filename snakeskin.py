@@ -20,6 +20,7 @@ g_formats = ('.jpg', '.png')  # Our accepted image formats
 
 g_imgs = {}
 
+#TODO: extract, doesn't have to do with resizing images
 def yesno(prompt):
     while True:
         response = input(f'{prompt} (y/n): ').lower()
@@ -30,7 +31,7 @@ def yesno(prompt):
         else:
             print('Invalid input. Try again')
 
-
+# NEW: manipulator methods
 def add_image(filename):
     if filename not in g_imgs:
         g_imgs[filename] = Image.open(filename)
@@ -38,6 +39,7 @@ def remove_image(filename):
     if filename in g_imgs:
         del(g_imgs[filename])
 
+#TODO: old, refactor and generalize interaction with images
 def load_images(imgs=None):
     #TODO: g_formats is a global NEEDS FIXING
     if imgs is None:    # Load the images in the current directory
@@ -48,10 +50,8 @@ def load_images(imgs=None):
     # NOTE: Image object loses its original format and filename properties
     filenames = [img.filename for img in images]
     return images, filenames
-
 def resize(images,ratio=g_ratio):
     return [img.resize(ratio, Image.ANTIALIAS) for img in images]
-
 def save(images,filenames):
     for img, name in zip(images, filenames):
         img.save(name,subsampling=0,quality=100)
