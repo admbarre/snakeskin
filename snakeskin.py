@@ -2,83 +2,60 @@ from PIL import Image
 import sys, os, datetime, zipfile
 from pathlib import Path
 
-#TODO: Use an argument parsin lib to add options
-'''
-if len(sys.argv) < 2:
-    sys.exit("Program usage: snakeskin.py [directory]")
-target = Path(sys.argv[1])    # The directory with our images we want scaled
-os.chdir(target)    # Move into our image directory
-'''
-
-# ==============
-# Globals
-# TODO: FIX THIS
-# ==============
-g_today = datetime.date.today().strftime('%m-%d-%y') 
-g_ratio = (1920,1080) # Our desired image size
-g_formats = ('.jpg', '.png')  # Our accepted image formats
-
-g_imgs = {}
-
-#TODO: extract, doesn't have to do with resizing images
-def yesno(prompt):
-    while True:
-        response = input(f'{prompt} (y/n): ').lower()
-        if response == 'y':
-            return 1
-        elif response == 'n':
-            return 0
-        else:
-            print('Invalid input. Try again')
-
-# NEW: manipulator methods
-def add_image(filename):
-    if filename not in g_imgs:
-        g_imgs[filename] = Image.open(filename)
-def remove_image(filename):
-    if filename in g_imgs:
-        del(g_imgs[filename])
-
-#TODO: old, refactor and generalize interaction with images
-def load_images(imgs=None):
-    #TODO: g_formats is a global NEEDS FIXING
-    if imgs is None:    # Load the images in the current directory
-        images = [Image.open(img) for img in os.listdir() if img.endswith(g_formats)]
-    else:
-        images = [Image.open(img) for img in imgs]
+class ImageList():
+    def __init__(self, formats = ('.jpg', '.png') ):
+        self._images = []
+        self._formats = formats
     
-    # NOTE: Image object loses its original format and filename properties
-    filenames = [img.filename for img in images]
-    return images, filenames
-def resize(images,ratio=g_ratio):
-    return [img.resize(ratio, Image.ANTIALIAS) for img in images]
-def save(images,filenames):
-    for img, name in zip(images, filenames):
-        img.save(name,subsampling=0,quality=100)
-    return True
+    @property
+    def images(self):
+        return self._images
+    @property
+    def formats(self):
+        return self._formats
 
-def quit():
-    print('~Snakeskin has completed~')
+    def add_image(self,path,date):
+        if path not in [img.path for img in self._images]:
+            self._images.append(ExpiringImage(path,date))
+    def resize_all(self,ratio=(1920,1080)):
+        for img in self._images:
+            img.resize(ratio)
+    def save_all(self):
+        for img in self._images:
+            img.save()
+    def __iter__(self):
+        return iter(self._images)
 
-def main():
-    #TODO: g_today is a global NEEDS FIXING
-    print(f'Date: {g_today}')
+class ExpiringImage():
+    def __init__(self, path, date):
+        self._path = path
+        self._image = Image.open(self.path)
+        self._expiration = date
 
-    images, filenames = load_images()
+    #TODO: Better way to do this...
+    def __repr__(self):
+        return self.__str__()
+    def __str__(self):
+        return f'Path: {self._path}, Expiration: {self._expiration}, Size: {self._image.size}'
 
-    print('Editing:')
-    for name in filenames:
-        print(f'+ {name}')
+    @property
+    def path(self):
+        return self._path
+    @property
+    def expiration(self):
+        return self._expiration
+    
+    @expiration.setter
+    def expiration(self, date):
+        self._expiration = date
 
-    if yesno('Resize files?'):
-        resized_images = resize(images,g_ratio)
-        if yesno('Save files?'):
-            if save(resized_images, filenames):
-                print('Files saved successfully.')
-            #TODO: g_today is a global NEEDS FIXING
-            if yesno("Rename folder with today's date?"):
-                os.rename(Path.cwd(), Path.cwd() / '..' / g_today)
-    quit()
+    @path.setter
+    def path(self, path):
+        self._path = path
+        self._image = Image.open(self._path)
 
-if __name__ == '__main__':
-    main()
+    def resize(self,ratio):
+        # Resize is not done in place
+        self._image = self._image.resize(ratio, Image.ANTIALIAS)
+    def save(self):
+        self._image.save(self._path,subsampling=0,quality=100)

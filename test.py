@@ -13,17 +13,29 @@ def yesno(prompt):
         else:
             print('Invalid input. Try again')
 def main():
-    print(f'Date: {g_today}')
-    files = os.listdir()
-    print('Editing: ')
-    for f in files:
-        print(f'+ {f}')
+    images = skin.ImageList()
+    print(images.images)
 
-    if yesno('Resize files?'):
-        resized_images = skin.resize(images,g_ratio)
-        if yesno('Save files?'):
-            if skin.save(resized_images, filenames):
-                print('Files saved successfully.')
+    print(f'Date: {g_today}')
+    files = [f for f in os.listdir() if f.endswith(images.formats)]
+    print('Images in current directory: ')
+    for f in files:
+        print(f'- {f}')
+    if yesno('Add these files?'):
+        for f in files:
+            images.add_image(f,None)
+        print('Images added:')
+        for img in images:
+            print(f'+ {img}')
+        if yesno('Resize these images?'):
+            images.resize_all()
+            for img in images:
+                print(f'~ {img}')
+            if yesno('Save these images?'):
+                images.save_all()
+
+
+
 
 if __name__ == '__main__':
     main()
