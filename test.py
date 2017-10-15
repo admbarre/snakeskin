@@ -34,9 +34,6 @@ def main():
             if yesno('Save these images?'):
                 images.save_all()
 
-
-
-
 if __name__ == '__main__':
     main()
 

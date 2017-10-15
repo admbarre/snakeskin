@@ -1,6 +1,4 @@
 from PIL import Image
-import sys, os, datetime, zipfile
-from pathlib import Path
 
 class ImageList():
     def __init__(self, formats = ('.jpg', '.png') ):
@@ -32,7 +30,7 @@ class ExpiringImage():
         self._image = Image.open(self.path)
         self._expiration = date
 
-    #TODO: Better way to do this...
+    #TODO: Better way to do this...?
     def __repr__(self):
         return self.__str__()
     def __str__(self):
